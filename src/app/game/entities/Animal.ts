@@ -1,23 +1,22 @@
 import { Graphics, Point } from "pixi.js";
-import { randomFloat, randomInt } from "../../../engine/utils/random";
+import { randomFloat } from "../../../engine/utils/random";
 
 export enum AnimalState {
   IDLE = "idle",
   FOLLOWING = "following",
   PATROLLING = "patrolling",
-  IN_YARD = "in_yard"
+  IN_YARD = "in_yard",
 }
 
 export class Animal extends Graphics {
   private static readonly RADIUS = 10;
-  private static readonly COLOR = 0xffffff; // Белый цвет
+  private static readonly COLOR = 0xffffff;
   private static readonly FOLLOW_SPEED = 150;
   private static readonly PATROL_SPEED = 50;
   private static readonly FOLLOW_DISTANCE = 30;
 
   private state: AnimalState = AnimalState.IDLE;
   private followTarget: Point | null = null;
-  private patrolTarget: Point | null = null;
   private patrolDirection: Point = new Point(1, 0);
   private patrolTimer = 0;
   private patrolChangeInterval: number;
@@ -25,7 +24,7 @@ export class Animal extends Graphics {
   constructor(x: number, y: number) {
     super();
     this.position.set(x, y);
-    this.patrolChangeInterval = randomFloat(2, 5); // Смена направления каждые 2-5 секунд
+    this.patrolChangeInterval = randomFloat(2, 5);
     this.drawAnimal();
     this.generateRandomPatrolDirection();
   }
@@ -42,7 +41,10 @@ export class Animal extends Graphics {
     this.patrolDirection.set(Math.cos(angle), Math.sin(angle));
   }
 
-  public update(deltaTime: number, gameFieldBounds: { width: number; height: number }): void {
+  public update(
+    deltaTime: number,
+    gameFieldBounds: { width: number; height: number },
+  ): void {
     switch (this.state) {
       case AnimalState.PATROLLING:
         this.updatePatrol(deltaTime, gameFieldBounds);
@@ -53,7 +55,10 @@ export class Animal extends Graphics {
     }
   }
 
-  private updatePatrol(deltaTime: number, bounds: { width: number; height: number }): void {
+  private updatePatrol(
+    deltaTime: number,
+    bounds: { width: number; height: number },
+  ): void {
     this.patrolTimer += deltaTime;
 
     if (this.patrolTimer >= this.patrolChangeInterval) {
@@ -66,18 +71,28 @@ export class Animal extends Graphics {
     const newX = this.x + this.patrolDirection.x * speed;
     const newY = this.y + this.patrolDirection.y * speed;
 
-    // Проверка границ и отражение
-    if (newX <= -bounds.width / 2 + Animal.RADIUS || newX >= bounds.width / 2 - Animal.RADIUS) {
+    // Check bounds and reflect direction
+    if (
+      newX <= -bounds.width / 2 + Animal.RADIUS ||
+      newX >= bounds.width / 2 - Animal.RADIUS
+    ) {
       this.patrolDirection.x *= -1;
     }
-    if (newY <= -bounds.height / 2 + Animal.RADIUS || newY >= bounds.height / 2 - Animal.RADIUS) {
+    if (
+      newY <= -bounds.height / 2 + Animal.RADIUS ||
+      newY >= bounds.height / 2 - Animal.RADIUS
+    ) {
       this.patrolDirection.y *= -1;
     }
 
-    this.x = Math.max(-bounds.width / 2 + Animal.RADIUS,
-                     Math.min(bounds.width / 2 - Animal.RADIUS, newX));
-    this.y = Math.max(-bounds.height / 2 + Animal.RADIUS,
-                     Math.min(bounds.height / 2 - Animal.RADIUS, newY));
+    this.x = Math.max(
+      -bounds.width / 2 + Animal.RADIUS,
+      Math.min(bounds.width / 2 - Animal.RADIUS, newX),
+    );
+    this.y = Math.max(
+      -bounds.height / 2 + Animal.RADIUS,
+      Math.min(bounds.height / 2 - Animal.RADIUS, newY),
+    );
   }
 
   private updateFollowing(deltaTime: number): void {

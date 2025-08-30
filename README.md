@@ -36,3 +36,4 @@ npm install
 ```bash
 npm run start
 ```
+## Enjoi the game on http://localhost:8080

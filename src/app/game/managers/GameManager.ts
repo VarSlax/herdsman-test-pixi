@@ -3,7 +3,7 @@ import { Hero } from "../entities/Hero";
 import { Animal, AnimalState } from "../entities/Animal";
 import { Yard } from "../entities/Yard";
 import { GameField } from "../entities/GameField";
-import { randomFloat, randomInt } from "../../../engine/utils/random";
+import { randomFloat } from "../../../engine/utils/random";
 
 export class GameManager {
   private static readonly MAX_ANIMALS_IN_GROUP = 5;
@@ -51,7 +51,7 @@ export class GameManager {
 
   private handleFieldClick(x: number, y: number): void {
     // Перемещаем героя к точке клика
-    this.hero.moveTo(x, y);
+    this.hero.moveToPosition(x, y);
   }
 
   private spawnInitialAnimals(): void {
@@ -70,12 +70,15 @@ export class GameManager {
     // Пытаемся найти позицию, которая не пересекается с загоном и героем
     do {
       x = randomFloat(-fieldBounds.width / 2 + 30, fieldBounds.width / 2 - 30);
-      y = randomFloat(-fieldBounds.height / 2 + 30, fieldBounds.height / 2 - 30);
+      y = randomFloat(
+        -fieldBounds.height / 2 + 30,
+        fieldBounds.height / 2 - 30,
+      );
       attempts++;
     } while (
       attempts < maxAttempts &&
       (this.yard.containsPoint(new Point(x, y)) ||
-       this.getDistance(new Point(x, y), this.hero.getPosition()) < 100)
+        this.getDistance(new Point(x, y), this.hero.getPosition()) < 100)
     );
 
     const animal = new Animal(x, y);
@@ -101,15 +104,19 @@ export class GameManager {
       animal.update(deltaTime, fieldBounds);
 
       // Проверяем, находится ли животное в загоне
-      if (animal.getState() === AnimalState.FOLLOWING &&
-          this.yard.containsPoint(animal.getPosition())) {
+      if (
+        animal.getState() === AnimalState.FOLLOWING &&
+        this.yard.containsPoint(animal.getPosition())
+      ) {
         this.deliverAnimalToYard(animal, i);
         continue;
       }
 
       // Проверяем, может ли животное начать следовать за героем
-      if (animal.getState() === AnimalState.PATROLLING &&
-          this.followingAnimals.length < GameManager.MAX_ANIMALS_IN_GROUP) {
+      if (
+        animal.getState() === AnimalState.PATROLLING &&
+        this.followingAnimals.length < GameManager.MAX_ANIMALS_IN_GROUP
+      ) {
         const distance = this.getDistance(animal.getPosition(), heroPos);
         if (distance <= GameManager.ANIMAL_FOLLOW_DISTANCE) {
           this.startAnimalFollowing(animal);
@@ -178,7 +185,7 @@ export class GameManager {
     this.gameField.resize(width, height);
 
     // Перемещаем загон в новую позицию
-    const yardBounds = this.yard.getBounds();
+    const yardBounds = this.yard.getYardBounds();
     const newYardX = width / 2 - yardBounds.width / 2 - 20;
     const newYardY = -height / 2 + yardBounds.height / 2 + 20;
     this.yard.position.set(newYardX, newYardY);

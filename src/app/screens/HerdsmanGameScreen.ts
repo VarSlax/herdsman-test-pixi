@@ -125,7 +125,10 @@ export class HerdsmanGameScreen extends Container {
     this.scoreDisplay.setPosition(centerX, 30);
 
     // Обновляем размеры игрового поля
-    this.gameManager.resize(Math.min(width - 100, 1000), Math.min(height - 100, 700));
+    this.gameManager.resize(
+      Math.min(width - 100, 1000),
+      Math.min(height - 100, 700),
+    );
   }
 
   /** Show screen with animations */

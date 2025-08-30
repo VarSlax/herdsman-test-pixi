@@ -3,8 +3,8 @@ import { animate } from "motion";
 
 export class Hero extends Graphics {
   private static readonly RADIUS = 15;
-  private static readonly COLOR = 0xff0000; // Красный цвет
-  private static readonly SPEED = 200; // пикселей в секунду
+  private static readonly COLOR = 0xff0000;
+  private static readonly SPEED = 200;
 
   private targetPosition: Point | null = null;
   private isMoving = false;
@@ -20,7 +20,7 @@ export class Hero extends Graphics {
     this.fill(Hero.COLOR);
   }
 
-  public moveTo(targetX: number, targetY: number): Promise<void> {
+  public moveToPosition(targetX: number, targetY: number): Promise<void> {
     if (this.isMoving) {
       return Promise.resolve();
     }
@@ -29,14 +29,14 @@ export class Hero extends Graphics {
     this.isMoving = true;
 
     const distance = Math.sqrt(
-      Math.pow(targetX - this.x, 2) + Math.pow(targetY - this.y, 2)
+      Math.pow(targetX - this.x, 2) + Math.pow(targetY - this.y, 2),
     );
     const duration = distance / Hero.SPEED;
 
     return animate(
-      this,
+      this.position,
       { x: targetX, y: targetY },
-      { duration, ease: "linear" }
+      { duration, ease: "linear" },
     ).then(() => {
       this.isMoving = false;
       this.targetPosition = null;

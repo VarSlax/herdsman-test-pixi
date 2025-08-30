@@ -11,9 +11,9 @@ export class ScoreDisplay extends Container {
 
   private createScoreDisplay(): void {
     const style = new TextStyle({
-      fontFamily: 'Arial',
+      fontFamily: "Arial",
       fontSize: 24,
-      fontWeight: 'bold',
+      fontWeight: "bold",
       fill: 0xffffff,
       stroke: { color: 0x000000, width: 2 },
       dropShadow: {
@@ -25,7 +25,7 @@ export class ScoreDisplay extends Container {
     });
 
     this.scoreText = new Text({
-      text: 'Счет: 0',
+      text: "Счет: 0",
       style,
     });
 
